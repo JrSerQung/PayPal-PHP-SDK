@@ -169,28 +169,33 @@ class PayPalModel
      * @param $param
      * @return array
      */
-    private function _convertToArray($param)
-    {
-        $ret = array();
-        foreach ($param as $k => $v) {
-            if ($v instanceof PayPalModel) {
-                $ret[$k] = $v->toArray();
-            } elseif (is_array($v) && sizeof($v) <= 0) {
-                $ret[$k] = array();
-            } elseif (is_array($v)) {
-                $ret[$k] = $this->_convertToArray($v);
-            } else {
-                $ret[$k] = $v;
-            }
-        }
-        // If the array is empty, which means an empty object,
-        // we need to convert array to StdClass object to properly
-        // represent JSON String
-        if (sizeof($ret) <= 0) {
-            $ret = new PayPalModel();
-        }
-        return $ret;
+   private function _convertToArray($param)
+{
+    $ret = [];
+
+    if (!is_array($param)) {
+        // If $param is a scalar or object, just return as-is
+        return $param;
     }
+
+    foreach ($param as $k => $v) {
+        if ($v instanceof PayPalModel) {
+            $ret[$k] = $v->toArray();
+        } elseif (is_array($v)) {
+            // Only recurse if it’s a non-empty array
+            $ret[$k] = $this->_convertToArray($v);
+        } else {
+            $ret[$k] = $v;
+        }
+    }
+
+    // If the array is empty, return empty object instead
+    if (empty($ret)) {
+        return new \stdClass();
+    }
+
+    return $ret;
+}
 
     /**
      * Fills object value from Array list
