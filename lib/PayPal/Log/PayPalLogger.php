@@ -5,6 +5,7 @@ namespace PayPal\Log;
 use PayPal\Core\PayPalConfigManager;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
+use Stringable;
 
 class PayPalLogger extends AbstractLogger
 {
@@ -75,7 +76,7 @@ class PayPalLogger extends AbstractLogger
     /**
      * PSR-3 compatible log method
      */
-    public function log($level, Stringable|string $message, array $context = []): void
+     public function log($level, Stringable|string $message, array $context = []): void
     {
         // If logging disabled, do nothing
         if (!$this->isLoggingEnabled) {
